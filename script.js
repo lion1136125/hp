@@ -1,2 +1,69 @@
-(function(){const callBtn=document.getElementById('callButton');const desktopNumber=document.getElementById('desktopNumber');const isMobile=/Android|iPhone|iPad|iPod|Windows Phone/i.test(navigator.userAgent);if(!isMobile){if(desktopNumber)desktopNumber.addEventListener('click',e=>e.preventDefault());if(callBtn)callBtn.addEventListener('click',e=>e.preventDefault());if(callBtn)callBtn.classList.add('outline');}})();
-(function(){const form=document.getElementById('serviceForm');const toast=document.getElementById('toast');const endpoint='https://formsubmit.co/ajax/noteservice@outlook.kr';function showToast(){toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),3200);}form.addEventListener('submit',async e=>{e.preventDefault();const data=new FormData(form);data.append('_subject','[HP서비스센터] 온라인 접수');data.append('_template','table');data.append('브랜드','HP');data.append('사이트','HP서비스센터');try{const res=await fetch(endpoint,{method:'POST',body:data});if(res.ok){form.reset();showToast();}else{alert('전송에 실패했습니다. 잠시 후 다시 시도해주세요.');}}catch(err){alert('네트워크 오류가 발생했습니다.');}});})();
+document.addEventListener("DOMContentLoaded", () => {
+  const form = document.getElementById("serviceForm");
+  const successBox = document.getElementById("submitSuccess");
+
+  if (!form) return;
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const name = document.getElementById("custName").value.trim();
+    const phone = document.getElementById("custPhone").value.trim();
+    const area = document.getElementById("custArea").value.trim();
+    const issueType = document.getElementById("issueType").value;
+    const issueDetail = document.getElementById("issueDetail").value.trim();
+
+    if (!name || !phone) {
+      alert("성함과 연락처는 필수입니다.");
+      return;
+    }
+
+    try {
+      await fetch("https://formsubmit.co/ajax/noteservice@outlook.kr", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
+        body: JSON.stringify({
+          "성함": name,
+          "연락처": phone,
+          "지역/주소": area,
+          "고장 증상": issueType,
+          "상세 설명": issueDetail,
+          "_subject": "홈페이지 신규 A/S 접수",
+          "_template": "table",
+          "_captcha": "false"
+        })
+      });
+    } catch (err) {
+      console.error("전송 오류", err);
+    }
+
+    if (successBox) {
+      successBox.style.display = "block";
+    }
+
+    form.reset();
+  });
+});
+
+// ===== Desktop: disable tel: links so they do nothing on PC =====
+(function(){
+  function disableTelOnDesktop(){
+    if (window.matchMedia && window.matchMedia('(min-width: 960px)').matches){
+      document.querySelectorAll('a[href^="tel:"]').forEach(function(a){
+        a.addEventListener('click', function(e){ e.preventDefault(); }, { passive:false });
+        a.style.cursor = 'default';
+      });
+    }
+  }
+  if (document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', disableTelOnDesktop);
+  } else {
+    disableTelOnDesktop();
+  }
+  // Re-run on resize in case viewport crosses breakpoint
+  window.addEventListener('resize', disableTelOnDesktop);
+})();
+
