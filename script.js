@@ -27,7 +27,7 @@ document.addEventListener("DOMContentLoaded", () => {
     form.reset();
 
     // ⭐ HP Google Apps Script로 백그라운드 전송
-    fetch("https://script.google.com/macros/s/AKfycbwjRvkFlQiJTO9GgyHvxKbMwvQWI6s5LvXQx5klpLqMuI6qduk4PVdQ32LfSc2S2XOt/exec", {
+    fetch("https://script.google.com/macros/s/AKfycbxLWUrWB2qmZ8bP-Naad1__fPP13J9b-H4-WHtLTQh7eXa58ZIGLaOyPIgH9V2P5O17/exec", {
       method: "POST",
       mode: "no-cors",   // ⛔ 절대 건들면 안 됨! (CORS 무력화)
       headers: {
